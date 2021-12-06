@@ -4,21 +4,23 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.UiModeManager.MODE_NIGHT_YES
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.location.Address
+import android.location.Geocoder
 import android.location.Location
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
 import android.view.View
-import android.widget.CompoundButton
-import android.widget.Switch
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
+import java.lang.Exception
 import java.util.jar.Manifest
 
 class MainActivity : AppCompatActivity() {
@@ -34,22 +36,34 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvAddress: TextView
 
     // Switches
-    lateinit var swLocationUpdates: SwitchCompat
-    lateinit var swGps: SwitchCompat
+    private lateinit var swLocationUpdates: SwitchCompat
+    private lateinit var swGps: SwitchCompat
+
+    // Buttons
+    private lateinit var btnNewWayPoint: Button
+    private lateinit var btnShowWayPoints: Button
 
     // API for location services
-    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    lateinit var locationRequest: LocationRequest
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
 
-    val fastUpdateInterval: Long = 5
-    val defaultUpdateInterval: Long = 30
-    val permissionsCode: Int = 99
+    private val fastUpdateInterval: Long = 5
+    private val defaultUpdateInterval: Long = 30
+    private val permissionsCode: Int = 99
+
+    // Current Location
+    private lateinit var currentLocation: Location
+
+    // List of saved locations
+    private lateinit var savedLocations: List<Location>
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#FF6200EE")))
 
         tvLatitude = findViewById(R.id.tvLatitude)
         tvLongitude = findViewById(R.id.tvLongitude)
@@ -61,6 +75,10 @@ class MainActivity : AppCompatActivity() {
         tvAddress = findViewById(R.id.tvAddress)
         swLocationUpdates = findViewById(R.id.swLocationsUpdates)
         swGps = findViewById(R.id.swGps)
+        btnNewWayPoint = findViewById(R.id.btn_newWayPoint)
+        btnShowWayPoints = findViewById(R.id.btn_showWayPoints)
+
+
 
         locationRequest =  LocationRequest()
 
@@ -76,6 +94,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        btnNewWayPoint.setOnClickListener {
+            // Get GPS Location
+
+            // Add the new location to the list
+        }
+
         swGps.setOnCheckedChangeListener { compoundButton, isChecked ->
             if(isChecked){
                 locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -89,7 +113,6 @@ class MainActivity : AppCompatActivity() {
 
         swLocationUpdates.setOnCheckedChangeListener { compoundButton, isChecked ->
             if(isChecked){
-
                 startLocationUpdates()
             }
             else{
@@ -191,6 +214,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
+
     private fun updateUIValues(location: Location) {
 
         tvLatitude.text = location.latitude.toString()
@@ -207,6 +232,15 @@ class MainActivity : AppCompatActivity() {
             location.speed.toString()
         } else{
             "Not available"
+        }
+
+        val geocoder = Geocoder(this)
+
+        try {
+            val addresses: List<Address> = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+            tvAddress.text = addresses[0].getAddressLine(0)
+        }catch (e: Exception){
+            tvAddress.text = "Unable to get street address"
         }
 
     }
