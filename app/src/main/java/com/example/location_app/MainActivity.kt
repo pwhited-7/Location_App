@@ -3,12 +3,14 @@ package com.example.location_app
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.UiModeManager.MODE_NIGHT_YES
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
+import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -34,6 +36,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvSensor: TextView
     private lateinit var tvUpdates: TextView
     private lateinit var tvAddress: TextView
+    private lateinit var tvWayPointCounter: TextView
+
 
     // Switches
     private lateinit var swLocationUpdates: SwitchCompat
@@ -42,6 +46,7 @@ class MainActivity : AppCompatActivity() {
     // Buttons
     private lateinit var btnNewWayPoint: Button
     private lateinit var btnShowWayPoints: Button
+    private lateinit var btnShowMap: Button
 
     // API for location services
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -56,9 +61,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var currentLocation: Location
 
     // List of saved locations
-    private lateinit var savedLocations: List<Location>
+    private lateinit var savedLocations: ArrayList<Location>
 
-
+    private var locationUpdates = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,7 +82,8 @@ class MainActivity : AppCompatActivity() {
         swGps = findViewById(R.id.swGps)
         btnNewWayPoint = findViewById(R.id.btn_newWayPoint)
         btnShowWayPoints = findViewById(R.id.btn_showWayPoints)
-
+        btnShowMap = findViewById(R.id.btn_showMap)
+        tvWayPointCounter = findViewById(R.id.tv_wayPointCounter)
 
 
         locationRequest =  LocationRequest()
@@ -98,6 +104,22 @@ class MainActivity : AppCompatActivity() {
             // Get GPS Location
 
             // Add the new location to the list
+            val myApplication: MyApplication = applicationContext as MyApplication
+            savedLocations = myApplication.getMyLocation() as ArrayList<Location>
+            if(locationUpdates) {
+                savedLocations.add(currentLocation)
+            }
+        }
+
+        btnShowMap.setOnClickListener {
+            val intent = Intent(this, MapsActivity::class.java)
+            startActivity(intent)
+
+        }
+
+        btnShowWayPoints.setOnClickListener {
+            val intent = Intent(this, ShowSavedLocations::class.java)
+            startActivity(intent)
         }
 
         swGps.setOnCheckedChangeListener { compoundButton, isChecked ->
@@ -112,6 +134,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         swLocationUpdates.setOnCheckedChangeListener { compoundButton, isChecked ->
+            locationUpdates = isChecked
             if(isChecked){
                 startLocationUpdates()
             }
@@ -123,6 +146,8 @@ class MainActivity : AppCompatActivity() {
         updateGPS()
 
     } // end onCreate
+
+
 
     @SuppressLint("MissingPermission")
     private fun startLocationUpdates() {
@@ -199,6 +224,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT)
                         .show()
                     updateUIValues(location)
+                    currentLocation = location
                 }
             }
             else -> {
@@ -242,6 +268,13 @@ class MainActivity : AppCompatActivity() {
         }catch (e: Exception){
             tvAddress.text = "Unable to get street address"
         }
+
+        val myApplication: MyApplication = applicationContext as MyApplication
+        savedLocations = myApplication.getMyLocation() as ArrayList<Location>
+
+        // Show the number of waypoints saved
+        tvWayPointCounter.text = (savedLocations.size).toString()
+
 
     }
 }

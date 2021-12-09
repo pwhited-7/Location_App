@@ -5,7 +5,8 @@
       <map>
         <entry key="..\:/Users/pacen/AndroidStudioProjects/Location_App/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.31614583333333335" />
         <entry key="..\:/Users/pacen/AndroidStudioProjects/Location_App/app/src/main/res/drawable/ic_launcher_background.xml" value="0.31614583333333335" />
-        <entry key="..\:/Users/pacen/AndroidStudioProjects/Location_App/app/src/main/res/layout/activity_main.xml" value="0.4444444444444444" />
+        <entry key="..\:/Users/pacen/AndroidStudioProjects/Location_App/app/src/main/res/layout/activity_main.xml" value="0.2222222222222222" />
+        <entry key="..\:/Users/pacen/AndroidStudioProjects/Location_App/app/src/main/res/layout/activity_show_saved_locations.xml" value="0.17478632478632478" />
       </map>
     </option>
   </component>
