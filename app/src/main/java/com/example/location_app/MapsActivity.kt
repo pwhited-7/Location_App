@@ -50,7 +50,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      * installed Google Play services and returned to the app.
      */
     override fun onMapReady(googleMap: GoogleMap) {
+
+
         mMap = googleMap
+
 
         // Add a marker in Sydney and move the camera
         val sydney = LatLng(-34.0, 151.0)
@@ -66,7 +69,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     .title("Lat: "+location.latitude+" Lon: "+ location.longitude)
 
             )
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
         }
+
+        var listener: GoogleMap.OnMapClickListener
+
+        mMap.setOnMapClickListener {  }
     }
 }

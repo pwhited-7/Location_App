@@ -180,6 +180,8 @@ class MainActivity : AppCompatActivity() {
                     // Permission is granted. Continue the action or workflow
                     // in your app.
                     updateGPS()
+                    Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT)
+                        .show()
                 } else {
                     // Explain to the user that the feature is unavailable because
                     // the features requires a permission that the user has denied.
@@ -221,8 +223,7 @@ class MainActivity : AppCompatActivity() {
                 //user provides permission
                 fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location ->
                     // we got permission
-                    Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT)
-                        .show()
+
                     updateUIValues(location)
                     currentLocation = location
                 }
@@ -273,7 +274,7 @@ class MainActivity : AppCompatActivity() {
         savedLocations = myApplication.getMyLocation() as ArrayList<Location>
 
         // Show the number of waypoints saved
-        tvWayPointCounter.text = (savedLocations.size).toString()
+        tvWayPointCounter.text = " " +(savedLocations.size).toString()
 
 
     }
